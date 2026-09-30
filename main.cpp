@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 
     auto root = new QWidget();
 
-    root->setWindowTitle("My First Qt APP");
-    root->setFixedSize(800, 600);
+    root->setWindowTitle("CSV Viewer");
+    root->setGeometry(0, 0, 800, 600);
 
     csv::CSVTable table = csv::from_csv("./customers-100000.csv");
 
