@@ -70,6 +70,14 @@ namespace csv {
             return m_rows;
         }
 
+        std::string& operator[](const std::size_t index) {
+            return m_rows.at(index);
+        }
+
+        const std::string& operator[](const std::size_t index) const {
+            return m_rows.at(index);
+        }
+
         friend std::ostream& operator<<(std::ostream& os, const CSVColumn& col) {
             os << "Column header: " << col.header() << '\n';
             os << "column size: " << col.rows().size() << '\n';
@@ -78,6 +86,10 @@ namespace csv {
                 os << row << '\n';
 
             return os;
+        }
+
+        [[nodiscard]] std::size_t size() const {
+            return m_rows.size();
         }
 
         class CSVIter {

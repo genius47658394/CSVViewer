@@ -64,12 +64,25 @@ namespace csv {
             return m_name;
         }
 
+        [[nodiscard]] std::vector<std::string> headers() const {
+            std::vector<std::string> out{};
+
+            for (const auto& col: columns())
+                out.emplace_back(col.header());
+
+            return out;
+        }
+
         [[nodiscard]] const std::vector<CSVColumn>& columns() const {
             return m_cols;
         }
 
         [[nodiscard]] std::size_t size() const {
             return m_cols.size();
+        }
+
+        [[nodiscard]] std::size_t size_of_column() const {
+            return m_cols[0].size();
         }
 
         friend std::ostream& operator<<(std::ostream& os, const CSVTable& table) {
@@ -83,6 +96,15 @@ namespace csv {
         }
 
         ~CSVTable() = default;
+
+        [[nodiscard]] std::vector<std::string> get_row(std::size_t size) const {
+            std::vector<std::string> out{};
+
+            for (const auto& col: m_cols)
+                out.emplace_back(col[size]);
+
+            return out;
+        }
     };
 
     inline CSVTable from_csv(const std::string_view file_path, char delim = ',') {
