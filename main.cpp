@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     root->setWindowTitle("My First Qt APP");
     root->setFixedSize(800, 600);
 
-    csv::CSVTable table = csv::from_csv("./example_columns.csv");
+    csv::CSVTable table = csv::from_csv("./customers-100000.csv");
 
     QVector<QVector<std::string>> vec = create_2d_from_table(table);
 

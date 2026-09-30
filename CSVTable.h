@@ -109,12 +109,26 @@ namespace csv {
 
     inline CSVTable from_csv(const std::string_view file_path, char delim = ',') {
         auto split = [&delim](const std::string& line) {
-            std::stringstream ss{line};
-            std::string buffer{};
             std::vector<std::string> out{};
+            std::string buffer{};
 
-            while (std::getline(ss, buffer, delim))
-                out.emplace_back(buffer);
+            for (auto it = line.begin(); it != line.end(); ++it) {
+                if (*it == '\"') {
+                    ++it;
+
+                    while (*it != '\"') {
+                        buffer += *it;
+                        ++it;
+                    }
+
+                    continue;
+                }
+                if (*it == delim) /* replace in future cuz delimiter would be const char* */ {
+                    out.emplace_back(buffer);
+                    buffer.clear();
+                }
+                else buffer += *it;
+            }
 
             return out;
         };
