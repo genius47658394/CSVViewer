@@ -7,6 +7,7 @@
 #include <QLabel>
 
 #include "CSVTable.h"
+#include "CSVTableModel.h"
 
 static QVector<std::string> Qvec_from_std_vec(const std::vector<std::string>& vec) {
     QVector<std::string> line{};
@@ -54,19 +55,26 @@ int main(int argc, char* argv[]) {
 
     root->setWindowTitle("CSV Viewer");
     root->setGeometry(0, 0, 800, 600);
+    root->setStyleSheet("background-color: #1F6B75");
 
     csv::CSVTable table = csv::from_csv("./customers-100000.csv");
 
-    QVector<QVector<std::string>> vec = create_2d_from_table(table);
+    auto model = new CSVTableModel(table);
 
-    auto table_widget = create_table_widget(vec, root);
+    // QVector<QVector<std::string>> vec = create_2d_from_table(table);
+    auto view = new QTableView(root);
+    view->setModel(model);
+    view->setGeometry(0, 0, 800, 600);
 
-    auto* layout = new QVBoxLayout(root);
-    layout->addWidget(table_widget);
+    auto layout = new QVBoxLayout(root);
+    layout->addWidget(view);
+
+    // auto table_widget = create_table_widget(vec, root);
+    //
+    // auto* layout = new QVBoxLayout(root);
+    // layout->addWidget(table_widget);
 
     root->show();
-
-
 
     return QApplication::exec();
 }

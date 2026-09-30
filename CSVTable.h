@@ -77,10 +77,12 @@ namespace csv {
             return m_cols;
         }
 
+        // count of columns in table
         [[nodiscard]] std::size_t size() const {
             return m_cols.size();
         }
 
+        // count of rows in column
         [[nodiscard]] std::size_t size_of_column() const {
             return m_cols[0].size();
         }
