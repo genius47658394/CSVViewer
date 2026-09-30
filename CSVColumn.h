@@ -17,14 +17,14 @@ namespace csv {
         std::vector<std::string> m_rows{}; // mb in future replace with unique_ptr
 
     public:
-        CSVColumn() {}
+        CSVColumn() = default;
 
         explicit CSVColumn(const std::string_view name) : m_header(std::move(std::make_unique<std::string>(name))) {}
 
-        explicit CSVColumn(const CSVColumn& other) : m_header(std::move(std::make_unique<std::string>(*other.m_header))),
+        CSVColumn(const CSVColumn& other) : m_header(std::move(std::make_unique<std::string>(*other.m_header))),
                                                      m_rows(other.m_rows) {}
 
-        explicit CSVColumn(CSVColumn&& other) noexcept : m_header(std::move(other.m_header)), m_rows(std::move(other.m_rows)) {}
+        CSVColumn(CSVColumn&& other) noexcept : m_header(std::move(other.m_header)), m_rows(std::move(other.m_rows)) {}
 
         CSVColumn& operator=(const CSVColumn& other) {
             if (this == std::addressof(other))
