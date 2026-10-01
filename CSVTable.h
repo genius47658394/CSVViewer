@@ -127,7 +127,7 @@ namespace csv {
         }
     };
 
-    inline CSVTable from_csv(const std::string_view file_path, char delim = ',') {
+    inline CSVTable from_csv(const std::string& file_path, char delim = ',') {
         auto split = [&delim](const std::string& line) {
             std::vector<std::string> out{};
             std::string buffer{};
@@ -159,7 +159,9 @@ namespace csv {
 
         if (!f) throw std::runtime_error(std::format("Can't get csv table from file at path {}", file_path));
 
-        auto table = CSVTable(file_path.substr(2));
+        std::string name = std::string(file_path.begin() + 2, file_path.end() - 4);
+
+        auto table = CSVTable(name);
 
         std::string row{};
 
