@@ -77,6 +77,24 @@ namespace csv {
             return m_cols;
         }
 
+        CSVColumn& operator[](const std::size_t index) {
+            if (index >= size()) // in future create column if it don't exist
+                throw std::runtime_error(
+                    std::format("Index out of range\n\tindex={}, count of columns = {}", index, size())
+                    );
+
+            return m_cols[index];
+        }
+
+        const CSVColumn& operator[](const std::size_t index) const {
+            if (index >= size()) // in future create column if it don't exist
+                throw std::runtime_error(
+                    std::format("Index out of range\n\tindex={}, count of columns = {}", index, size())
+                    );
+
+            return m_cols[index];
+        }
+
         // count of columns in table
         [[nodiscard]] std::size_t size() const {
             return m_cols.size();
