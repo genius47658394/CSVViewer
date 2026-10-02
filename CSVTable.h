@@ -3,12 +3,16 @@
 //
 
 #pragma once
-#include <sstream>
 #include <vector>
 
 #include "CSVColumn.h"
 
 namespace csv {
+    class CSVTable;
+
+    inline CSVTable from_csv(const std::string& file_path, char delim = ',');
+    inline void to_csv_file(const CSVTable& table, char delim = ',');
+
     class CSVTable {
         std::string m_name{};
         std::vector<CSVColumn> m_cols{}; // mb replace with unique_ptr in future
@@ -16,7 +20,9 @@ namespace csv {
     public:
         CSVTable() = default;
 
-        explicit CSVTable(const std::string_view name) : m_name(name) {}
+        explicit CSVTable(const std::string& path) {
+            *this = std::move(from_csv(path));
+        }
 
         CSVTable(const CSVTable& other) = default;
 
@@ -66,6 +72,10 @@ namespace csv {
         }
 
         [[nodiscard]] const std::string& name() const {
+            return m_name;
+        }
+
+        [[nodiscard]] std::string& name() {
             return m_name;
         }
 
@@ -126,7 +136,9 @@ namespace csv {
             return os;
         }
 
-        ~CSVTable() = default;
+        ~CSVTable() {
+            to_csv_file(*this);
+        }
 
         [[nodiscard]] std::vector<std::string> get_row(std::size_t col_idx) const {
             if (col_idx >= size_of_column()) throw std::runtime_error(std::format(
@@ -142,7 +154,7 @@ namespace csv {
         }
     };
 
-    inline CSVTable from_csv(const std::string& file_path, char delim = ',') {
+    inline CSVTable from_csv(const std::string& file_path, char delim) {
         auto split = [&delim](const std::string& line) {
             std::vector<std::string> out{};
             std::string buffer{};
@@ -176,13 +188,14 @@ namespace csv {
 
         if (file_path.empty()) throw std::runtime_error("Can't get csv table by empty file path");
 
-        std::ifstream f(file_path.data());
+        std::ifstream f(file_path);
 
         if (!f) throw std::runtime_error(std::format("Can't get csv table from file at path {}", file_path));
 
         std::string name = std::string(file_path.begin() + 2, file_path.end() - 4);
 
-        auto table = CSVTable(name);
+        auto table = CSVTable();
+        table.name() = std::move(name);
 
         std::string row{};
 
@@ -194,5 +207,32 @@ namespace csv {
             table.add_row(split(row));
 
         return table;
+    }
+
+    inline void to_csv_file(const CSVTable& table, char delim) {
+        if (table.empty()) return;
+
+        auto vec_to_str = [&delim](const std::vector<std::string>& vec) {
+            std::string out{};
+
+            for (const auto& part: vec)
+                out += part + delim;
+
+            out = std::string(out.begin(), out.end() - 1 );
+            return out;
+        };
+
+        const std::string path = std::move(std::string("./" + table.name() + ".csv"));
+
+        std::ofstream out(path);
+
+        if (!out) throw std::runtime_error(std::format("Can't open file to write table by path \"{}\"", path));
+
+        out.clear();
+
+        out << vec_to_str(table.headers()) << std::endl;
+
+        for (std::size_t i = 0; i < table.size_of_column(); ++i)
+            out << vec_to_str(table.get_row(i)) << std::endl;
     }
 }

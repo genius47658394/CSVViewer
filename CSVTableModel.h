@@ -10,6 +10,8 @@
 
 // крч класс через который Qt будет обращаться к CSVTable
 class CSVTableModel : public QAbstractTableModel {
+    Q_OBJECT
+
     csv::CSVTable& table;
 
 public:
@@ -44,7 +46,35 @@ public:
         return {};
     }
 
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override {
+        if (Qt::EditRole == role) {
+            if (!checkIndex(index)) return false;
+
+            table[index.column()][index.row()] = std::move(value.toString().toStdString());
+
+            QString result;
+
+            for (int col = 0; col < table.size(); ++col) {
+                for (int row = 0; row < table.size_of_column(); ++row) {
+                    result += table[col][row] + ' ';
+                }
+            }
+
+            emit editCompleted(result);
+            return true;
+        }
+
+        return false;
+    }
+
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const override {
+        return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
+    }
+
     explicit CSVTableModel(csv::CSVTable& table) : table(table) {}
 
     ~CSVTableModel() override = default;
+
+    signals:
+        void editCompleted(const QString &);
 };

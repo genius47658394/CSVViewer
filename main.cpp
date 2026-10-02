@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
         }
     )");
 
-    csv::CSVTable table = std::move(csv::from_csv("./example_columns.csv"));
+    csv::CSVTable table{"./sample-30mb.csv"};
 
     // table доолжен жить больше чем model, чтобы не было dangling reference(висячая ссылка)
     auto model = new CSVTableModel(table);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     view->verticalHeader()->setDefaultSectionSize(28);
 
     auto table_name_label = new QLabel(root);
-    table_name_label->setText(QString::fromStdString(table.name().data()));
+    table_name_label->setText(QString::fromStdString(table.name()));
 
     auto layout = new QVBoxLayout(root);
 
