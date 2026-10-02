@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
         }
     )");
 
-    csv::CSVTable table = csv::from_csv("./customers-100000.csv");
+    csv::CSVTable table = std::move(csv::from_csv("./example_columns.csv"));
 
     // table доолжен жить больше чем model, чтобы не было dangling reference(висячая ссылка)
     auto model = new CSVTableModel(table);

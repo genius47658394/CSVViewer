@@ -10,7 +10,7 @@
 
 namespace csv {
     class CSVTable {
-        std::string_view m_name{};
+        std::string m_name{};
         std::vector<CSVColumn> m_cols{}; // mb replace with unique_ptr in future
 
     public:
@@ -54,13 +54,18 @@ namespace csv {
 
         void add_row(const std::vector<std::string>& row) {
             std::size_t i = 0;
+
             for (const auto& part: row) {
+                if (i >= size()) throw std::runtime_error(std::format(
+                "index of column is more than count of columns\n\t count of column = {}, index of column = {}",
+                size(), i));
+
                 this->m_cols[i].add_row(part);
                 i++;
             }
         }
 
-        [[nodiscard]] const std::string_view& name() const {
+        [[nodiscard]] const std::string& name() const {
             return m_name;
         }
 
@@ -78,7 +83,7 @@ namespace csv {
         }
 
         CSVColumn& operator[](const std::size_t index) {
-            if (index >= size()) // in future create column if it don't exist
+            if (index >= size())
                 throw std::runtime_error(
                     std::format("Index out of range\n\tindex={}, count of columns = {}", index, size())
                     );
@@ -87,7 +92,7 @@ namespace csv {
         }
 
         const CSVColumn& operator[](const std::size_t index) const {
-            if (index >= size()) // in future create column if it don't exist
+            if (index >= size())
                 throw std::runtime_error(
                     std::format("Index out of range\n\tindex={}, count of columns = {}", index, size())
                     );
@@ -95,13 +100,19 @@ namespace csv {
             return m_cols[index];
         }
 
+        [[nodiscard]] bool empty() const {
+            return m_cols.empty();
+        }
+
         // count of columns in table
         [[nodiscard]] std::size_t size() const {
             return m_cols.size();
         }
 
-        // count of rows in column
+        // count of rows in column (all columns have one count of rows)
         [[nodiscard]] std::size_t size_of_column() const {
+            if (empty()) return 0;
+
             return m_cols[0].size();
         }
 
@@ -117,11 +128,15 @@ namespace csv {
 
         ~CSVTable() = default;
 
-        [[nodiscard]] std::vector<std::string> get_row(std::size_t size) const {
+        [[nodiscard]] std::vector<std::string> get_row(std::size_t col_idx) const {
+            if (col_idx >= size_of_column()) throw std::runtime_error(std::format(
+                "Can't get row cuz column index i more than size of column\n\t column index = {}, size of column = {}",
+                col_idx, size_of_column()));
+
             std::vector<std::string> out{};
 
             for (const auto& col: m_cols)
-                out.emplace_back(col[size]);
+                out.emplace_back(col[col_idx]);
 
             return out;
         }
@@ -143,12 +158,18 @@ namespace csv {
 
                     continue;
                 }
+
                 if (*it == delim) /* replace in future cuz delimiter would be const char* */ {
                     out.emplace_back(buffer);
                     buffer.clear();
+                    continue;
                 }
-                else buffer += *it;
+
+                buffer += *it;
             }
+
+            out.emplace_back(buffer);
+            buffer.clear();
 
             return out;
         };
