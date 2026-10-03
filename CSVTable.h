@@ -14,7 +14,7 @@ namespace csv {
     inline void to_csv_file(const CSVTable& table, char delim = ',');
 
     class CSVTable {
-        std::string m_name{};
+        std::string m_path{};
         std::vector<CSVColumn> m_cols{}; // mb replace with unique_ptr in future
 
     public:
@@ -27,13 +27,13 @@ namespace csv {
         CSVTable(const CSVTable& other) = default;
 
         CSVTable(CSVTable&& other) noexcept :
-                    m_name(std::exchange(other.m_name, "")), m_cols(std::move(other.m_cols)) {}
+                    m_path(std::exchange(other.m_path, "")), m_cols(std::move(other.m_cols)) {}
 
         CSVTable& operator=(const CSVTable& other) {
             if (std::addressof(other) == this)
                 return *this;
 
-            this->m_name = other.m_name;
+            this->m_path = other.m_path;
             this->m_cols = other.m_cols;
 
             return *this;
@@ -43,7 +43,7 @@ namespace csv {
             if (std::addressof(other) == this)
                 return *this;
 
-            this->m_name = std::exchange(other.m_name, "");
+            this->m_path = std::exchange(other.m_path, "");
             this->m_cols = std::move(other.m_cols);
 
             return *this;
@@ -72,11 +72,11 @@ namespace csv {
         }
 
         [[nodiscard]] const std::string& name() const {
-            return m_name;
+            return m_path;
         }
 
         [[nodiscard]] std::string& name() {
-            return m_name;
+            return m_path;
         }
 
         [[nodiscard]] std::vector<std::string> headers() const {
@@ -192,7 +192,7 @@ namespace csv {
 
         if (!f) throw std::runtime_error(std::format("Can't get csv table from file at path {}", file_path));
 
-        std::string name = std::string(file_path.begin() + 2, file_path.end() - 4);
+        std::string name = std::string(file_path.begin(), file_path.end());
 
         auto table = CSVTable();
         table.name() = std::move(name);
@@ -222,7 +222,7 @@ namespace csv {
             return out;
         };
 
-        const std::string path = std::move(std::string("./" + table.name() + ".csv"));
+        const std::string path = std::move(std::string(table.name()));
 
         std::ofstream out(path);
 

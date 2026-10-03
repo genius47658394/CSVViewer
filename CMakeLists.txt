@@ -17,7 +17,10 @@ find_package(Qt6 COMPONENTS
 add_executable(MyFirstQtApp main.cpp
         CSVColumn.h
         CSVTable.h
-        CSVTableModel.h)
+        CSVTableModel.h
+        CSVTableView.h
+        Window.h
+        MyInputDialog.h)
 target_link_libraries(MyFirstQtApp
         Qt::Core
         Qt::Gui
