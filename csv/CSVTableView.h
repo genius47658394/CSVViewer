@@ -7,7 +7,6 @@
 #include <QHeaderView>
 #include <qtableview.h>
 
-
 class CSVTableView : public QTableView {
     Q_OBJECT
 public:

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <format>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -144,7 +143,8 @@ namespace csv {
         CSVIter end() { return {this, m_rows.size()}; }
 
         // TODO: add API
-        // TODO: add compare operators
+
+        auto operator<=>(const CSVColumn&) const = default;
 
         ~CSVColumn() = default;
     };

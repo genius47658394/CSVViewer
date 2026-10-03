@@ -5,8 +5,6 @@
 #pragma once
 
 #include <qwidget.h>
-#include <QInputDialog>
-
 
 class Window : public QWidget {
     Q_OBJECT

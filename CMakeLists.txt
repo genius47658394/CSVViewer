@@ -1,30 +1,37 @@
 cmake_minimum_required(VERSION 4.3)
-project(MyFirstQtApp)
+
+project(CSVViewer LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_PREFIX_PATH "C:/Qt/6.11.2/mingw_64")
 
-find_package(Qt6 COMPONENTS
+find_package(Qt6 REQUIRED COMPONENTS
         Core
         Gui
         Widgets
-        REQUIRED)
+)
 
-add_executable(MyFirstQtApp main.cpp
-        CSVColumn.h
-        CSVTable.h
-        CSVTableModel.h
-        CSVTableView.h
+# Подключаем CMakeLists.txt из csv/
+add_subdirectory(csv)
+
+add_executable(CSVViewer
+        main.cpp
         Window.h
-        MyInputDialog.h)
-target_link_libraries(MyFirstQtApp
-        Qt::Core
-        Qt::Gui
-        Qt::Widgets
+        MyInputDialog.h
+)
+
+target_link_libraries(CSVViewer
+        PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        csv
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

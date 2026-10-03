@@ -3,10 +3,10 @@
 //
 
 #pragma once
+
 #include <qabstractitemmodel.h>
 
 #include "CSVTable.h"
-
 
 // крч класс через который Qt будет обращаться к CSVTable
 class CSVTableModel : public QAbstractTableModel {

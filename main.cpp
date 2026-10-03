@@ -2,9 +2,9 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-#include "CSVTable.h"
-#include "CSVTableModel.h"
-#include "CSVTableView.h"
+#include "csv/CSVTable.h"
+#include "csv/CSVTableModel.h"
+#include "csv/CSVTableView.h"
 #include "MyInputDialog.h"
 #include "Window.h"
 
@@ -20,6 +20,10 @@ int main(int argc, char* argv[]) {
 
     if (dialog->exec() == QDialog::Accepted)
         path = dialog->textValue();
+
+    if (path.isEmpty()) {
+        // научиться обрабатывать такой случай, когда пользователь нажал крестик и Dialog вернул ""
+    }
 
     csv::CSVTable table{path.toStdString()};
 
