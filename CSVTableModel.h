@@ -51,17 +51,17 @@ public:
             if (!checkIndex(index)) return false;
 
             table[index.column()][index.row()] = std::move(value.toString().toStdString());
-
-            QString result;
-
-            for (int col = 0; col < table.size(); ++col) {
-                for (int row = 0; row < table.size_of_column(); ++row) {
-                    result += table[col][row] + ' ';
-                }
-            }
-
-            emit editCompleted(result);
             return true;
+            // QString result;
+            //
+            // for (int col = 0; col < table.size(); ++col) {
+            //     for (int row = 0; row < table.size_of_column(); ++row) {
+            //         result += table[col][row] + ' ';
+            //     }
+            // }
+            //
+            // emit editCompleted(result);
+            // return true;
         }
 
         return false;
@@ -71,7 +71,7 @@ public:
         return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
     }
 
-    explicit CSVTableModel(csv::CSVTable& table) : table(table) {}
+    explicit CSVTableModel(std::reference_wrapper<csv::CSVTable> table) : table(table) {}
 
     ~CSVTableModel() override = default;
 

@@ -8,6 +8,12 @@
 #include "CSVTable.h"
 #include "CSVTableModel.h"
 
+// class Window : public QWidget {
+//     Window(QWidget* parent = nullptr) {
+//
+//     }
+// };
+
 int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
 
@@ -51,7 +57,7 @@ int main(int argc, char* argv[]) {
     csv::CSVTable table{"./sample-30mb.csv"};
 
     // table доолжен жить больше чем model, чтобы не было dangling reference(висячая ссылка)
-    auto model = new CSVTableModel(table);
+    auto model = new CSVTableModel(std::ref(table));
 
     auto view = new QTableView(root);
 
